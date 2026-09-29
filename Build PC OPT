@@ -1,0 +1,40 @@
+name: Build PC OPT
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: "OPTI PC QLM X OKOO/PC_OPT"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          if (Test-Path requirements.txt) { pip install -r requirements.txt }
+
+      - name: Build EXE
+        run: |
+          pyinstaller --onefile --windowed --name "PC OPT" main.py
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: PC-OPT-exe
+          path: "OPTI PC QLM X OKOO/PC_OPT/dist/PC OPT.exe"
